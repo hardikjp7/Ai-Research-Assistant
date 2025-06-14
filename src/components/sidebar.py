@@ -2,14 +2,10 @@ import streamlit as st
 import os
 import requests
 
-#ollama Integration
+
+# Ollama Integration
 
 def get_ollama_models():
-    """Get list of available Ollama models from local instance.
-    
-    Returns:
-        list: Names of available Ollama models, or empty list if Ollama is not running
-    """
     try:
         response = requests.get("http://localhost:11434/api/tags")
         if response.status_code == 200:
@@ -19,10 +15,10 @@ def get_ollama_models():
     except:
         return []
 
+
 # Sidebar Configuration
 
 def render_sidebar():
-    """Render the sidebar and handle API key & model configuration."""
     with st.sidebar:
         st.markdown("### ⚙️ Configuration")
         st.write("")
@@ -33,10 +29,10 @@ def render_sidebar():
                 help="Choose which Large Language Model provider to use",
                 horizontal=True
             )
-
+            
             if provider == "OpenAI":
                 model_option = st.selectbox(
-                   "Select OpenAI Model",
+                    "Select OpenAI Model",
                     ["gpt-4o-mini", "gpt-4o", "o1", "o1-mini", "o1-preview", "o3-mini", "Custom"],
                     index=0
                 )
@@ -48,12 +44,12 @@ def render_sidebar():
                 model = st.selectbox(
                     "Select GROQ Model",
                     [
-                    "qwen-2.5-32b",
-                    "deepseek-r1-distill-qwen-32b",
-                    "deepseek-r1-distill-llama-70b",
-                    "llama-3.3-70b-versatile",
-                    "llama-3.1-8b-instant",
-                    "Custom"
+                        "qwen-2.5-32b",
+                        "deepseek-r1-distill-qwen-32b",
+                        "deepseek-r1-distill-llama-70b",
+                        "llama-3.3-70b-versatile",
+                        "llama-3.1-8b-instant",
+                        "Custom"
                     ],
                     index=0,
                     help="Choose from GROQ's available models. All these models support tool use and parallel tool use."
@@ -73,7 +69,7 @@ def render_sidebar():
                         ollama_models,
                         help="Choose from your locally available Ollama models. For best results, use models known to handle function calling well (e.g., mixtral, openhermes)."
                     )
-
+        
         with st.expander("🔑 API Keys", expanded=True):
             st.info("API keys are stored temporarily in memory and cleared when you close the browser.")
             if provider == "OpenAI":
@@ -119,15 +115,14 @@ def render_sidebar():
                 **Note on Model Selection:**
                 - OpenAI and GROQ models provide full functionality with web search capabilities
                 - Ollama models run locally but have limited function-calling abilities
-                and will rely more on their base knowledge
+                  and will rely more on their base knowledge
                 
                 For Ollama users:
                 - Make sure Ollama is running locally with your desired models loaded
                 - Best results with models that handle function calling (e.g., mixtral, openhermes)
                 - Web search functionality is disabled for Ollama models
             """)
-
     return {
         "provider": provider,
-        "model": None
+        "model": model
     }
