@@ -106,6 +106,27 @@ def render_sidebar():
                 if exa_api_key:
                     os.environ["EXA_API_KEY"] = exa_api_key
 
+        st.write("")
+        with st.expander("ℹ️ About", expanded=False):
+            st.markdown("""
+                This research assistant uses advanced AI models to help you:
+                - Research any topic in depth
+                - Analyze and summarize information
+                - Provide structured reports
+                
+                Choose your preferred model and enter the required API keys to get started.
+                
+                **Note on Model Selection:**
+                - OpenAI and GROQ models provide full functionality with web search capabilities
+                - Ollama models run locally but have limited function-calling abilities
+                and will rely more on their base knowledge
+                
+                For Ollama users:
+                - Make sure Ollama is running locally with your desired models loaded
+                - Best results with models that handle function calling (e.g., mixtral, openhermes)
+                - Web search functionality is disabled for Ollama models
+            """)
+
     return {
         "provider": provider,
         "model": None
