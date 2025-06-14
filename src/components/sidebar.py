@@ -2,6 +2,22 @@ import streamlit as st
 import os
 import requests
 
+#ollama Integration
+
+def get_ollama_models():
+    """Get list of available Ollama models from local instance.
+    
+    Returns:
+        list: Names of available Ollama models, or empty list if Ollama is not running
+    """
+    try:
+        response = requests.get("http://localhost:11434/api/tags")
+        if response.status_code == 200:
+            models = response.json()
+            return [model["name"] for model in models["models"]]
+        return []
+    except:
+        return []
 
 # Sidebar Configuration
 
@@ -44,6 +60,19 @@ def render_sidebar():
                 )
                 if model == "Custom":
                     model = st.text_input("Enter your custom GROQ model:", value="", help="Specify your custom model string")
+            elif provider == "Ollama":
+                # Get available Ollama models
+                ollama_models = get_ollama_models()
+                if not ollama_models:
+                    st.warning("⚠️ No Ollama models found. Make sure Ollama is running locally.")
+                    model = None
+                else:
+                    st.warning("⚠️ Note: Most Ollama models have limited function-calling capabilities. This may affect research quality as they might not effectively use web search tools.")
+                    model = st.selectbox(
+                        "Select Ollama Model",
+                        ollama_models,
+                        help="Choose from your locally available Ollama models. For best results, use models known to handle function calling well (e.g., mixtral, openhermes)."
+                    )
 
         with st.expander("🔑 API Keys", expanded=True):
             st.info("API keys are stored temporarily in memory and cleared when you close the browser.")
@@ -66,15 +95,16 @@ def render_sidebar():
                 if groq_api_key:
                     os.environ["GROQ_API_KEY"] = groq_api_key
             
-            # EXA API key for web search
-            exa_api_key = st.text_input(
-                "EXA API Key",
-                type="password",
-                placeholder="Enter your EXA API key",
-                help="Enter your EXA API key for web search capabilities"
-            )
-            if exa_api_key:
-                os.environ["EXA_API_KEY"] = exa_api_key
+            # Only show EXA key input if not using Ollama
+            if provider != "Ollama":
+                exa_api_key = st.text_input(
+                    "EXA API Key",
+                    type="password",
+                    placeholder="Enter your EXA API key",
+                    help="Enter your EXA API key for web search capabilities"
+                )
+                if exa_api_key:
+                    os.environ["EXA_API_KEY"] = exa_api_key
 
     return {
         "provider": provider,
