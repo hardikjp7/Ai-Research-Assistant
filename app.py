@@ -8,6 +8,8 @@ except (ImportError, KeyError):
 import streamlit as st
 import os
 from src.components.sidebar import render_sidebar
+from src.components.researcher import create_researcher, create_research_task, run_research
+from src.utils.output_handler import capture_output
 
 # Configure the page
 st.set_page_config(
@@ -61,5 +63,25 @@ with col2:
     start_research = st.button("🚀 Start Research", use_container_width=False, type="primary")
 
 if start_research:
-    st.info(f"Selected provider: {selection['provider']}, Model: {selection['model']}")
-    st.info("Research functionality will be implemented soon...")
+    with st.status("🤖 Researching...", expanded=True) as status:
+        try:
+            # Create persistent container for process output with fixed height.
+            process_container = st.container(height=300, border=True)
+            output_container = process_container.container()
+            
+            # Single output capture context.
+            with capture_output(output_container):
+                researcher = create_researcher(selection)
+                task = create_research_task(researcher, task_description)
+                result = run_research(researcher, task)
+                status.update(label="✅ Research completed!", state="complete", expanded=False)
+        except Exception as e:
+            status.update(label="❌ Error occurred", state="error")
+            st.error(f"An error occurred: {str(e)}")
+            st.stop()
+    
+    # Convert CrewOutput to string for display
+    result_text = str(result)
+    
+    # Display the final result
+    st.markdown(result_text)
