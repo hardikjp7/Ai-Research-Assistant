@@ -85,3 +85,24 @@ if start_research:
     
     # Display the final result
     st.markdown(result_text)
+
+    # Create download buttons
+    st.divider()
+    download_col1, download_col2, download_col3 = st.columns([1, 2, 1])
+    with download_col2:
+        st.markdown("### 📥 Download Research Report")
+        
+        # Download as Markdown
+        st.download_button(
+            label="Download Report",
+            data=result_text,
+            file_name="research_report.md",
+            mime="text/markdown",
+            help="Download the research report in Markdown format"
+        )
+
+# Add footer
+st.divider()
+footer_col1, footer_col2, footer_col3 = st.columns([1, 2, 1])
+with footer_col2:
+    st.caption("Made with ❤️ by [Hardik Parmar](https://github.com/hardikjp7)")
