@@ -1,4 +1,4 @@
-# 🔍 AI Research Assistant
+# 🔍 AI Research Assistant [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://airesearch-assistant.streamlit.app/)
 
 A powerful research assistant built with CrewAI, Exa, and Streamlit that helps you research any topic using AI Agents.
 
